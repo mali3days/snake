@@ -1,32 +1,43 @@
 import React from 'react';
 
-let DEFAULT_INPUT_DIRECTION = { x: 0, y: 0 };
+export const DEFAULT_INPUT_DIRECTION = { x: 0, y: -1 };
 
-export function useInputDirection() {
-  const [inputDirection, setInputDirection] = React.useState(
-    DEFAULT_INPUT_DIRECTION
-  );
+export function useInputDirection(setInputDirection) {
+  const ref = React.useRef();
 
   React.useEffect(() => {
+    if (ref.current) return;
+    ref.current = true;
+
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
         case 'ArrowUp':
-          setInputDirection({ x: 0, y: -1 });
+          setInputDirection((oldInputDirection) => {
+            if (oldInputDirection.y !== 0) return oldInputDirection;
+            return { x: 0, y: -1 };
+          });
           break;
         case 'ArrowRight':
-          setInputDirection({ x: 1, y: 0 });
+          setInputDirection((oldInputDirection) => {
+            if (oldInputDirection.x !== 0) return oldInputDirection;
+            return { x: 1, y: 0 };
+          });
           break;
         case 'ArrowDown':
-          setInputDirection({ x: 0, y: 1 });
+          setInputDirection((oldInputDirection) => {
+            if (oldInputDirection.y !== 0) return oldInputDirection;
+            return { x: 0, y: 1 };
+          });
           break;
         case 'ArrowLeft':
-          setInputDirection({ x: -1, y: 0 });
+          setInputDirection((oldInputDirection) => {
+            if (oldInputDirection.x !== 0) return oldInputDirection;
+            return { x: -1, y: 0 };
+          });
           break;
         default:
           setInputDirection(DEFAULT_INPUT_DIRECTION);
       }
     });
-  }, []);
-
-  return { inputDirection };
+  }, [setInputDirection]);
 }
